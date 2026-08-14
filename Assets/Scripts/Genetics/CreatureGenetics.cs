@@ -89,6 +89,34 @@ namespace GenesisAR.Genetics
                 childGenome.sequence.Add(newGene);
             }
 
+            // Carry over tail genes from the longer parent (50% chance per inheritance event).
+            Genome longerParent = parentA.sequence.Count > parentB.sequence.Count ? parentA : parentB;
+            if (longerParent.sequence.Count > minLength && UnityEngine.Random.value >= 0.5f)
+            {
+                for (int i = minLength; i < longerParent.sequence.Count; i++)
+                {
+                    Gene tailGene = longerParent.sequence[i];
+                    if (tailGene == null) continue;
+
+                    Gene newTailGene = new Gene
+                    {
+                        geneName     = tailGene.geneName,
+                        category     = tailGene.category,
+                        value        = tailGene.value,
+                        isDominant   = tailGene.isDominant,
+                        expressColor = tailGene.expressColor
+                    };
+
+                    if (UnityEngine.Random.value < mutationRate)
+                    {
+                        newTailGene.value = Mathf.Clamp01(newTailGene.value + UnityEngine.Random.Range(-0.15f, 0.15f));
+                        Debug.Log($"[Genesis AR] Mutation occurred in tail gene: {newTailGene.geneName}");
+                    }
+
+                    childGenome.sequence.Add(newTailGene);
+                }
+            }
+
             return childGenome;
         }
     }
