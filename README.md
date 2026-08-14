@@ -13,4 +13,4 @@ To let players talk to Agent Buzz in-scene:
 4. Press Play and send a message to start the conversation.
 
 Script location:
-- `/home/runner/work/Project-E.C.H.O./Project-E.C.H.O./Assets/Scripts/UI/AgentBuzzChatUI.cs`
+- `Assets/Scripts/UI/AgentBuzzChatUI.cs`

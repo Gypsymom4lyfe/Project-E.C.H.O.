@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -31,6 +31,12 @@ namespace GenesisAR.UI
         [Tooltip("Optional canned intro line shown on start.")]
         [TextArea(2, 4)]
         public string introLine = "Buzz: Online and ready. Ask me anything about this world.";
+
+        [Tooltip("Maximum number of chat lines retained in the on-screen transcript.")]
+        [Min(1)]
+        public int maxTranscriptLines = 40;
+
+        private readonly Queue<string> _transcriptLines = new Queue<string>();
 
         private void Awake()
         {
@@ -110,13 +116,18 @@ namespace GenesisAR.UI
             if (conversationLogText == null || string.IsNullOrEmpty(line))
                 return;
 
-            if (string.IsNullOrEmpty(conversationLogText.text))
+            _transcriptLines.Enqueue(line);
+
+            while (_transcriptLines.Count > maxTranscriptLines)
+                _transcriptLines.Dequeue();
+
+            if (_transcriptLines.Count == 0)
             {
-                conversationLogText.text = line;
+                conversationLogText.text = string.Empty;
                 return;
             }
 
-            conversationLogText.text += $"\n{line}";
+            conversationLogText.text = string.Join("\n", _transcriptLines);
         }
     }
 }
