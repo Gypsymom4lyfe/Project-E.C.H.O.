@@ -15,7 +15,6 @@ namespace GenesisAR.Genetics
     [RequireComponent(typeof(GeneticsSystem))]
     public class EpigeneticEngine : MonoBehaviour
     {
-        private GeneticsSystem _geneticsSystem;
         private Renderer _creatureRenderer;
         private Material _creatureMaterial;
 
@@ -29,7 +28,6 @@ namespace GenesisAR.Genetics
 
         private void Awake()
         {
-            _geneticsSystem = GetComponent<GeneticsSystem>();
             _creatureRenderer = GetComponentInChildren<Renderer>();
             if (_creatureRenderer != null)
             {
