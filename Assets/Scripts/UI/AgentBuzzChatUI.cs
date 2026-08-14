@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -42,6 +43,9 @@ namespace GenesisAR.UI
         {
             if (sendButton != null)
                 sendButton.onClick.AddListener(SendCurrentInput);
+
+            if (playerInputField != null)
+                playerInputField.onSubmit.AddListener(HandleInputSubmitted);
         }
 
         private void Start()
@@ -63,15 +67,17 @@ namespace GenesisAR.UI
         {
             if (sendButton != null)
                 sendButton.onClick.RemoveListener(SendCurrentInput);
+
+            if (playerInputField != null)
+                playerInputField.onSubmit.RemoveListener(HandleInputSubmitted);
         }
 
-        private void Update()
+        private void HandleInputSubmitted(string _)
         {
-            if (!submitOnEnter || playerInputField == null)
+            if (!submitOnEnter)
                 return;
 
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
-                SendCurrentInput();
+            SendCurrentInput();
         }
 
         public void SendCurrentInput()
@@ -79,7 +85,7 @@ namespace GenesisAR.UI
             if (playerInputField == null)
                 return;
 
-            string message = playerInputField.text?.Trim();
+            string message = playerInputField.text.Trim();
             if (string.IsNullOrEmpty(message))
                 return;
 
@@ -89,9 +95,14 @@ namespace GenesisAR.UI
             if (clearInputAfterSend)
                 playerInputField.text = string.Empty;
 
-            playerInputField.ActivateInputField();
+            if (playerInputField.isActiveAndEnabled)
+                StartCoroutine(ReactivateInputNextFrame());
         }
 
+        /// <summary>
+        /// Returns a lightweight canned response using simple keyword matching
+        /// against the player's latest message.
+        /// </summary>
         private string GenerateBuzzReply(string playerMessage)
         {
             string lower = playerMessage.ToLowerInvariant();
@@ -121,13 +132,15 @@ namespace GenesisAR.UI
             while (_transcriptLines.Count > maxTranscriptLines)
                 _transcriptLines.Dequeue();
 
-            if (_transcriptLines.Count == 0)
-            {
-                conversationLogText.text = string.Empty;
-                return;
-            }
-
             conversationLogText.text = string.Join("\n", _transcriptLines);
+        }
+
+        private IEnumerator ReactivateInputNextFrame()
+        {
+            yield return null;
+
+            if (playerInputField != null && playerInputField.isActiveAndEnabled)
+                playerInputField.ActivateInputField();
         }
     }
 }
