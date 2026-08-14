@@ -28,7 +28,8 @@ namespace GenesisAR.Genetics
     {
         public List<Gene> sequence = new List<Gene>();
 
-        public static Genome CrossOver(Genome parentA, Genome parentB, float mutationRate = 0.05f)
+        public static Genome CrossOver(Genome parentA, Genome parentB, float mutationRate = 0.05f,
+                                       int maxGenomeLength = 32)
         {
             if (parentA == null)
             {
@@ -46,6 +47,9 @@ namespace GenesisAR.Genetics
             // Choose a random cut point within the shared region.
             // When minLength == 0 the cut is 0, so we fall straight through to the tail.
             int cutPoint = minLength > 1 ? UnityEngine.Random.Range(1, minLength) : 0;
+
+            // Track gene names already in the child to prevent homology duplicates.
+            HashSet<string> usedGeneNames = new HashSet<string>(StringComparer.Ordinal);
 
             // Front segment [0, cutPoint) from parentA; back segment [cutPoint, minLength) from parentB.
             for (int i = 0; i < minLength; i++)
@@ -68,17 +72,32 @@ namespace GenesisAR.Genetics
                     Debug.Log($"[Genesis AR] Mutation occurred in gene: {newGene.geneName}");
                 }
 
+                usedGeneNames.Add(newGene.geneName);
                 childGenome.sequence.Add(newGene);
             }
 
-            // Always carry over tail genes from the longer parent.
+            // Carry over tail genes from the longer parent.
+            // Skip genes whose name is already present (homology guard) and stop at maxGenomeLength (bloat guard).
             Genome longerParent = parentA.sequence.Count > parentB.sequence.Count ? parentA : parentB;
             if (longerParent.sequence.Count > minLength)
             {
                 for (int i = minLength; i < longerParent.sequence.Count; i++)
                 {
+                    if (childGenome.sequence.Count >= maxGenomeLength)
+                    {
+                        Debug.LogWarning($"[Genesis AR] CrossOver: genome length cap ({maxGenomeLength}) reached; tail truncated.");
+                        break;
+                    }
+
                     Gene tailGene = longerParent.sequence[i];
                     if (tailGene == null) continue;
+
+                    // Skip if a gene with this name is already in the child (homology mismatch guard).
+                    if (!string.IsNullOrEmpty(tailGene.geneName) && usedGeneNames.Contains(tailGene.geneName))
+                    {
+                        Debug.LogWarning($"[Genesis AR] CrossOver: duplicate gene '{tailGene.geneName}' skipped during tail inheritance.");
+                        continue;
+                    }
 
                     Gene newTailGene = new Gene
                     {
@@ -95,6 +114,7 @@ namespace GenesisAR.Genetics
                         Debug.Log($"[Genesis AR] Mutation occurred in tail gene: {newTailGene.geneName}");
                     }
 
+                    usedGeneNames.Add(newTailGene.geneName);
                     childGenome.sequence.Add(newTailGene);
                 }
             }
