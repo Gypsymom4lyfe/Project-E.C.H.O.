@@ -54,8 +54,11 @@ namespace GenesisAR.Genetics
 
         private void EvaluateEpigeneticExpression()
         {
+            bool nearThermalPlume = _currentEnvironment.ThermalPlumeProximity > 0f &&
+                                    _currentEnvironment.ThermalPlumeProximity < 3.0f;
+
             // 1. Extreme Heat / Thermal Plume Proximity -> Trigger Heat Shock Response
-            if (_currentEnvironment.TemperatureCelsius > 35.0f || _currentEnvironment.ThermalPlumeProximity < 3.0f)
+            if (_currentEnvironment.TemperatureCelsius > 35.0f || nearThermalPlume)
             {
                 HeatShockProteinExpressed = true;
                 ThermalToleranceMultiplier = 1.5f;
