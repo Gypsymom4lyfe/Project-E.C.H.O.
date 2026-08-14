@@ -33,6 +33,67 @@ namespace GenesisAR.Ecosystem
             (index >= 0 && index < biomes.Count) ? biomes[index] : null;
 
         /// <summary>
+        /// Returns a human-readable summary of current atmospheric/weather conditions
+        /// across all biomes (average temperature and humidity).
+        /// Returns null if no biomes are registered.
+        /// </summary>
+        public string GetCurrentWeatherSummary()
+        {
+            if (biomes == null || biomes.Count == 0) return null;
+
+            float totalTemp = 0f;
+            float totalHumidity = 0f;
+            int count = 0;
+
+            foreach (BiomeData b in biomes)
+            {
+                if (b == null) continue;
+                totalTemp += b.temperatureCelsius;
+                totalHumidity += b.humidity;
+                count++;
+            }
+
+            if (count == 0) return null;
+
+            float avgTemp = totalTemp / count;
+            float avgHumidity = totalHumidity / count;
+            string condition = avgTemp > 30f ? "Hot" : avgTemp < 0f ? "Freezing" : "Temperate";
+
+            return $"Conditions: {condition} | Avg Temp: {avgTemp:F1}°C | Avg Humidity: {avgHumidity:F1}% ({count} biomes sampled)";
+        }
+
+        /// <summary>
+        /// Returns a human-readable summary of current water/humidity conditions
+        /// across all biomes, highlighting the wettest and driest regions.
+        /// Returns null if no biomes are registered.
+        /// </summary>
+        public string GetCurrentWaterSummary()
+        {
+            if (biomes == null || biomes.Count == 0) return null;
+
+            BiomeData wettest = null;
+            BiomeData driest = null;
+            float totalHumidity = 0f;
+            int count = 0;
+
+            foreach (BiomeData b in biomes)
+            {
+                if (b == null) continue;
+                totalHumidity += b.humidity;
+                count++;
+
+                if (wettest == null || b.humidity > wettest.humidity) wettest = b;
+                if (driest == null || b.humidity < driest.humidity) driest = b;
+            }
+
+            if (count == 0) return null;
+
+            float avgHumidity = totalHumidity / count;
+
+            return $"Avg Humidity: {avgHumidity:F1}% | Wettest: {wettest.biomeName} ({wettest.humidity:F1}%) | Driest: {driest.biomeName} ({driest.humidity:F1}%)";
+        }
+
+        /// <summary>
         /// Updates a biome's live metrics. Call this from telemetry services or game logic.
         /// </summary>
         public void UpdateBiomeMetrics(int index, int population, float healthScore,
