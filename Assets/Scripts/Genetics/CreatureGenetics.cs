@@ -43,41 +43,23 @@ namespace GenesisAR.Genetics
             Genome childGenome = new Genome();
             int minLength = Math.Min(parentA.sequence.Count, parentB.sequence.Count);
 
+            // Choose a random cut point within the shared region.
+            // When minLength == 0 the cut is 0, so we fall straight through to the tail.
+            int cutPoint = minLength > 1 ? UnityEngine.Random.Range(1, minLength) : 0;
+
+            // Front segment [0, cutPoint) from parentA; back segment [cutPoint, minLength) from parentB.
             for (int i = 0; i < minLength; i++)
             {
-                Gene geneA = parentA.sequence[i];
-                Gene geneB = parentB.sequence[i];
-                Gene chosenGene;
-
-                if (geneA == null && geneB == null)
-                {
-                    continue;
-                }
-
-                if (geneA == null)
-                {
-                    chosenGene = geneB;
-                }
-                else if (geneB == null)
-                {
-                    chosenGene = geneA;
-                }
-                else if (geneA.isDominant != geneB.isDominant)
-                {
-                    chosenGene = geneA.isDominant ? geneA : geneB;
-                }
-                else
-                {
-                    chosenGene = UnityEngine.Random.value > 0.5f ? geneA : geneB;
-                }
+                Gene sourceGene = i < cutPoint ? parentA.sequence[i] : parentB.sequence[i];
+                if (sourceGene == null) continue;
 
                 Gene newGene = new Gene
                 {
-                    geneName = chosenGene.geneName,
-                    category = chosenGene.category,
-                    value = chosenGene.value,
-                    isDominant = chosenGene.isDominant,
-                    expressColor = chosenGene.expressColor
+                    geneName     = sourceGene.geneName,
+                    category     = sourceGene.category,
+                    value        = sourceGene.value,
+                    isDominant   = sourceGene.isDominant,
+                    expressColor = sourceGene.expressColor
                 };
 
                 if (UnityEngine.Random.value < mutationRate)
@@ -89,9 +71,9 @@ namespace GenesisAR.Genetics
                 childGenome.sequence.Add(newGene);
             }
 
-            // Carry over tail genes from the longer parent (50% chance per inheritance event).
+            // Always carry over tail genes from the longer parent.
             Genome longerParent = parentA.sequence.Count > parentB.sequence.Count ? parentA : parentB;
-            if (longerParent.sequence.Count > minLength && UnityEngine.Random.value >= 0.5f)
+            if (longerParent.sequence.Count > minLength)
             {
                 for (int i = minLength; i < longerParent.sequence.Count; i++)
                 {
