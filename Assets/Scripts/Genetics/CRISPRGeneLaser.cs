@@ -91,6 +91,10 @@ namespace GenesisAR.Genetics
         {
             if (laserBeam != null)
             {
+                if (laserBeam.positionCount < 2)
+                {
+                    laserBeam.positionCount = 2;
+                }
                 laserBeam.SetPosition(0, origin);
                 laserBeam.SetPosition(1, target);
                 laserBeam.enabled = true;
