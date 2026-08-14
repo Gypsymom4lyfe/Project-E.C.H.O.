@@ -37,6 +37,15 @@ namespace GenesisAR.Genetics
             }
         }
 
+        private void OnDestroy()
+        {
+            if (_creatureMaterial != null)
+            {
+                Destroy(_creatureMaterial);
+                _creatureMaterial = null;
+            }
+        }
+
         public void UpdateEnvironmentConditions(EnvironmentState newState)
         {
             _currentEnvironment = newState;
