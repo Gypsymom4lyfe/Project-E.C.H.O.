@@ -15,9 +15,9 @@ namespace GenesisAR.Genetics
     [RequireComponent(typeof(GeneticsSystem))]
     public class EpigeneticEngine : MonoBehaviour
     {
-        [Header("System References")]
         private GeneticsSystem _geneticsSystem;
         private Renderer _creatureRenderer;
+        private Material _creatureMaterial;
 
         [Header("Current Environment")]
         [SerializeField] private EnvironmentState _currentEnvironment;
@@ -31,6 +31,10 @@ namespace GenesisAR.Genetics
         {
             _geneticsSystem = GetComponent<GeneticsSystem>();
             _creatureRenderer = GetComponentInChildren<Renderer>();
+            if (_creatureRenderer != null)
+            {
+                _creatureMaterial = _creatureRenderer.material;
+            }
         }
 
         public void UpdateEnvironmentConditions(EnvironmentState newState)
@@ -72,10 +76,10 @@ namespace GenesisAR.Genetics
 
         private void ApplyVisualPhenotypeShift(Color stressColor, string logMessage)
         {
-            if (_creatureRenderer != null && _creatureRenderer.material.HasProperty("_EmissionColor"))
+            if (_creatureMaterial != null && _creatureMaterial.HasProperty("_EmissionColor"))
             {
                 // Smoothly shift emission color to reflect epigenetic stress state in AR
-                _creatureRenderer.material.SetColor("_EmissionColor", stressColor * 0.3f);
+                _creatureMaterial.SetColor("_EmissionColor", stressColor * 0.3f);
             }
 
             Debug.Log($"[Epigenetics] {gameObject.name}: {logMessage} | Metabolism: {MetabolismSpeedMultiplier}x");
