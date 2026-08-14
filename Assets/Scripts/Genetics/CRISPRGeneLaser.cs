@@ -83,7 +83,7 @@ namespace GenesisAR.Genetics
                 NucleotideBase.Thymine => NucleotideBase.Adenine,
                 NucleotideBase.Cytosine => NucleotideBase.Guanine,
                 NucleotideBase.Guanine => NucleotideBase.Cytosine,
-                _ => NucleotideBase.Thymine
+                _ => throw new ArgumentOutOfRangeException(nameof(inputBase), inputBase, "Unsupported nucleotide base.")
             };
         }
 
