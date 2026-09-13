@@ -50,7 +50,10 @@
       if (requestedApiBase) {
         try {
           const requestedUrl = new URL(requestedApiBase);
-          const isOriginOnly = requestedUrl.pathname === "/" && !requestedUrl.search && !requestedUrl.hash;
+          const isOriginOnly =
+            (requestedUrl.pathname === "" || requestedUrl.pathname === "/") &&
+            !requestedUrl.search &&
+            !requestedUrl.hash;
           if (allowedOrigins.has(requestedUrl.origin) && isOriginOnly) {
             apiBase = requestedUrl.origin;
           }

@@ -10,7 +10,7 @@ This repository now includes a lightweight FastAPI backend (`main.py`) and a bro
 
 1. Install dependencies:
    - `pip install fastapi uvicorn`
-   - Plain `uvicorn` is sufficient for `python main.py` in this demo.
+   - This installs the Python `uvicorn` package used by `import uvicorn` in `main.py`.
 2. Start the server:
    - `python main.py`
 
