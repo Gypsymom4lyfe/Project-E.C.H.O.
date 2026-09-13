@@ -42,11 +42,20 @@
     <script>
       const output = document.getElementById("output");
       const refreshButton = document.getElementById("refresh");
+      const queryParams = new URLSearchParams(window.location.search);
+      const fallbackApiBase =
+        window.location.origin && window.location.origin !== "null"
+          ? window.location.origin
+          : "http://127.0.0.1:8000";
+      const apiBase =
+        queryParams.get("apiBase") ||
+        window.localStorage.getItem("echoApiBase") ||
+        fallbackApiBase;
 
       async function loadTelemetry() {
         output.textContent = "Loading...";
         try {
-          const response = await fetch("http://127.0.0.1:8000/api/world/status");
+          const response = await fetch(`${apiBase}/api/world/status`);
           if (!response.ok) {
             throw new Error(`Request failed with status ${response.status}`);
           }

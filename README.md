@@ -20,3 +20,4 @@ The API will be available at `http://127.0.0.1:8000/api/world/status`.
 1. Keep the backend running.
 2. Open `index.html` in any modern browser.
 3. Use the page controls to fetch and view live telemetry.
+4. Optional: set a different backend origin using `?apiBase=http://host:port` in the URL.
