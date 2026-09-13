@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Echo Holographic Telemetry</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 2rem;
+        background: #0d1117;
+        color: #e6edf3;
+      }
+      button {
+        background: #238636;
+        color: #fff;
+        border: 0;
+        border-radius: 6px;
+        padding: 0.6rem 1rem;
+        cursor: pointer;
+      }
+      pre {
+        margin-top: 1rem;
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        padding: 1rem;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Project Echo Holographic Telemetry</h1>
+    <p>Fetch live world status data from the local FastAPI server.</p>
+    <button id="refresh">Refresh Telemetry</button>
+    <pre id="output">Click "Refresh Telemetry" to load data.</pre>
+
+    <script>
+      const output = document.getElementById("output");
+      const refreshButton = document.getElementById("refresh");
+
+      async function loadTelemetry() {
+        output.textContent = "Loading...";
+        try {
+          const response = await fetch("http://127.0.0.1:8000/api/world/status");
+          if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+          }
+          const data = await response.json();
+          output.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+          output.textContent = `Failed to fetch telemetry: ${error.message}`;
+        }
+      }
+
+      refreshButton.addEventListener("click", loadTelemetry);
+    </script>
+  </body>
+</html>
