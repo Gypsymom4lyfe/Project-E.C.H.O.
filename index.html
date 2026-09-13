@@ -43,13 +43,23 @@
       const output = document.getElementById("output");
       const refreshButton = document.getElementById("refresh");
       const queryParams = new URLSearchParams(window.location.search);
-      const fallbackApiBase =
-        window.location.origin && window.location.origin !== "null"
-          ? window.location.origin
-          : "http://127.0.0.1:8000";
-      const apiBase =
-        queryParams.get("apiBase") ||
-        fallbackApiBase;
+      const fallbackApiBase = "http://127.0.0.1:8000";
+      const allowedOrigins = new Set(["http://127.0.0.1:8000", "http://localhost:8000"]);
+      if (window.location.origin && window.location.origin !== "null") {
+        allowedOrigins.add(window.location.origin);
+      }
+      const requestedApiBase = queryParams.get("apiBase");
+      let apiBase = fallbackApiBase;
+      if (requestedApiBase) {
+        try {
+          const requestedUrl = new URL(requestedApiBase);
+          if (allowedOrigins.has(requestedUrl.origin)) {
+            apiBase = requestedUrl.origin;
+          }
+        } catch (_) {
+          apiBase = fallbackApiBase;
+        }
+      }
 
       async function loadTelemetry() {
         output.textContent = "Loading...";
