@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import random
 import time
+from typing import List
 
 app = FastAPI(title="Project Echo Holographic Server")
 
@@ -25,8 +27,23 @@ NODES = [
 ]
 
 
-@app.get("/api/world/status")
-def get_world_status():
+class NodeStatus(BaseModel):
+    id: str
+    lat: float
+    lon: float
+    status: str
+    biomass_index: float
+    active_load_watts: int
+
+
+class WorldStatusResponse(BaseModel):
+    timestamp: float
+    environment_status: str
+    nodes: List[NodeStatus]
+
+
+@app.get("/api/world/status", response_model=WorldStatusResponse)
+def get_world_status() -> WorldStatusResponse:
     """Returns real-time telemetry and ecological seeding metrics for the globe."""
     timestamp = time.time()
     nodes = []
@@ -38,7 +55,7 @@ def get_world_status():
         node_data["active_load_watts"] = random.randint(525, 700)
         nodes.append(node_data)
 
-    return {"timestamp": timestamp, "environment_status": "stable", "nodes": nodes}
+    return WorldStatusResponse(timestamp=timestamp, environment_status="stable", nodes=nodes)
 
 
 if __name__ == "__main__":

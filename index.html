@@ -65,7 +65,9 @@
       async function loadTelemetry() {
         output.textContent = "Loading...";
         try {
-          const response = await fetch(`${apiBase}/api/world/status`);
+          const response = await fetch(`${apiBase}/api/world/status`, {
+            headers: { Accept: "application/json" },
+          });
           if (!response.ok) {
             throw new Error(`Request failed with status ${response.status}`);
           }
