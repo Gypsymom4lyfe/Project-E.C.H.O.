@@ -19,7 +19,7 @@ The API will be available at `http://127.0.0.1:8000/api/world/status`.
 
 1. Keep the backend running.
 2. In the repository root, serve the frontend locally:
-   - `python -m http.server 8000`
-3. Open `http://127.0.0.1:8000/index.html` (or `http://localhost:8000/index.html`) in your browser.
+   - `python -m http.server 8080`
+3. Open `http://127.0.0.1:8080/index.html` (or `http://localhost:8080/index.html`) in your browser.
 4. Use the page controls to fetch and view live telemetry.
 5. Optional: set a trusted backend origin using `?apiBase=http://127.0.0.1:8000` or `?apiBase=http://localhost:8000`.
