@@ -37,7 +37,7 @@
     <h1>Project Echo Holographic Telemetry</h1>
     <p>Fetch live world status data from the local FastAPI server.</p>
     <button id="refresh">Refresh Telemetry</button>
-    <pre id="output">Click "Refresh Telemetry" to load data.</pre>
+    <pre id="output" aria-live="polite">Click "Refresh Telemetry" to load data.</pre>
 
     <script>
       const output = document.getElementById("output");
@@ -54,7 +54,8 @@
         try {
           const requestedUrl = new URL(requestedApiBase);
           if (allowedOrigins.has(requestedUrl.origin)) {
-            apiBase = requestedUrl.origin;
+            const sanitizedPath = requestedUrl.pathname.replace(/\/+$/, "");
+            apiBase = `${requestedUrl.origin}${sanitizedPath}`;
           }
         } catch (_) {
           apiBase = fallbackApiBase;
