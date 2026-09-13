@@ -44,7 +44,15 @@ class WorldStatusResponse(BaseModel):
 
 @app.get("/api/world/status", response_model=WorldStatusResponse)
 def get_world_status() -> WorldStatusResponse:
-    """Returns real-time telemetry and ecological seeding metrics for the globe."""
+    """Return current world telemetry with simulated node metrics.
+
+    Response fields:
+    - timestamp: Unix timestamp when this telemetry sample was produced.
+    - environment_status: Overall environment state string.
+    - nodes: Per-node telemetry including static coordinates/status plus:
+      - biomass_index: Simulated, clamped to [0.0, 1.0], rounded to 4 decimals.
+      - active_load_watts: Simulated integer load in the 525-700 watt range.
+    """
     timestamp = time.time()
     nodes = []
 
