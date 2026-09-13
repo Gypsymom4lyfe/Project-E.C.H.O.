@@ -10,6 +10,7 @@ This repository now includes a lightweight FastAPI backend (`main.py`) and a bro
 
 1. Install dependencies:
    - `pip install fastapi uvicorn`
+   - Plain `uvicorn` is sufficient for `python main.py` in this demo.
 2. Start the server:
    - `python main.py`
 
@@ -22,4 +23,4 @@ The API will be available at `http://127.0.0.1:8000/api/world/status`.
    - `python -m http.server 8080`
 3. Open `http://127.0.0.1:8080/index.html` (or `http://localhost:8080/index.html`) in your browser.
 4. Use the page controls to fetch and view live telemetry.
-5. Optional: set a trusted backend origin using `?apiBase=http://127.0.0.1:8000` or `?apiBase=http://localhost:8000`.
+5. Optional: set a trusted backend origin using `?apiBase=http://127.0.0.1:8000` or `?apiBase=http://localhost:8000` (origin-only values).

@@ -50,9 +50,9 @@
       if (requestedApiBase) {
         try {
           const requestedUrl = new URL(requestedApiBase);
-          if (allowedOrigins.has(requestedUrl.origin)) {
-            const sanitizedPath = requestedUrl.pathname.replace(/\/+$/, "");
-            apiBase = `${requestedUrl.origin}${sanitizedPath}`;
+          const isOriginOnly = requestedUrl.pathname === "/" && !requestedUrl.search && !requestedUrl.hash;
+          if (allowedOrigins.has(requestedUrl.origin) && isOriginOnly) {
+            apiBase = requestedUrl.origin;
           }
         } catch (_) {
           apiBase = fallbackApiBase;
